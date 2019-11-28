@@ -101,9 +101,12 @@ public class FlyingPlanner implements IFlyingPlannerPartB<Airport,Flight>, IFlyi
 		GraphPath<Airport, Flight> path = p.getPath(airsMap.get(s), airsMap.get(t));
 		List<Flight> connections = path.getEdgeList();
 		Journey j = new Journey(path);
+		
+		
 		for(Flight conn : connections)	{
 			System.out.format(format, "0", conn.getFrom().getName() + " (" + conn.getFrom().getCode() + ")", conn.getFromGMTime(), conn.getFlightCode(), conn.getTo().getName() + " (" + conn.getTo().getCode() + ")", conn.getToGMTime());
 		}
+		
 		System.out.println("Total Journey Cost: " + "£" + (int) path.getWeight());
 		System.out.println("Total Time in the Air: " + j.airTime());
 	}	

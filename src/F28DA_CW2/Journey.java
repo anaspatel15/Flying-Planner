@@ -15,9 +15,11 @@ public class Journey implements IJourneyPartB<Airport, Flight>, IJourneyPartC<Ai
 	
 	private Airport start;
 	private Airport end;
+	private List<Flight> fList;
 	private GraphPath<Airport, Flight> gp;
 	
-	public Journey(Airport start, Airport end) {
+
+	public Journey(GraphPath<Airport, Flight> gp) {
 		this.start = start;
 		this.end = end;
 		this.gp = gp;
@@ -30,17 +32,20 @@ public class Journey implements IJourneyPartB<Airport, Flight>, IJourneyPartC<Ai
 		List<String> stopCodes = new ArrayList<String>();
 		// TODO Auto-generated method stub
 		List<Airport> stops = gp.getVertexList();
+		
 		for(Airport stop : stops) {
 			stopCodes.add(stop.getCode());
 		}
 		return stopCodes;
 	}
 
+	
 	@Override
 	public List<String> getFlights() {
 		// TODO Auto-generated method stub
 		List<String> flightCodes = new ArrayList<String>();
 		List<Flight> flights = gp.getEdgeList();
+		
 		for(Flight f : flights) {
 			flightCodes.add(f.getFlightCode());
 		}
@@ -60,13 +65,13 @@ public class Journey implements IJourneyPartB<Airport, Flight>, IJourneyPartC<Ai
 	public int totalCost() {
 		// TODO Auto-generated method stub
 		return (int) gp.getWeight();
-	}
+		}
 
 	
 	@Override
 	public int airTime() {
 		// TODO Auto-generated method stub
-		List<Flight> fList = gp.getEdgeList();
+	
 		List<String[]> timings = new ArrayList<String[]>();
 		List<int[]> intDepTimes = new ArrayList<int[]>();
 		List<int[]> intArrTimes = new ArrayList<int[]>();
@@ -78,19 +83,15 @@ public class Journey implements IJourneyPartB<Airport, Flight>, IJourneyPartC<Ai
 			startTime = f.getFromGMTime();
 			endTime = f.getToGMTime();
 			String[] e = {startTime, endTime};
-			timings.add(e);
-		}
-			
-		for(String[] t : timings) {
-			for(int i = 0; i < t.length; i++) {
-				if(t[i].length() == 1) {
-					t[i] = "000" + t[i];
+			for(int i = 0; i < e.length; i++) {
+				if(e[i].length() == 1) {
+					e[i] = "000" + e[i];
 				}
-				if(t[i].length() == 2) {
-					t[i] = "00" + t[i];
+				if(e[i].length() == 2) {
+					e[i] = "00" + e[i];
 				}
-				if(t[i].length() == 3) {
-					t[i] = "0" + t[i];
+				if(e[i].length() == 3) {
+					e[i] = "0" + e[i];
 				}
 			}
 			SimpleDateFormat format = new SimpleDateFormat("HHmm");
@@ -98,8 +99,8 @@ public class Journey implements IJourneyPartB<Airport, Flight>, IJourneyPartC<Ai
 			Date stTime;
 			Date finTime;
 			try {
-				stTime = format.parse(t[0]);
-				finTime = format.parse(t[1]);
+				stTime = format.parse(e[0]);
+				finTime = format.parse(e[1]);
 				long durMs = finTime.getTime() - stTime.getTime();
 				
 				if(stTime.getTime() > finTime.getTime())	{
@@ -109,14 +110,13 @@ public class Journey implements IJourneyPartB<Airport, Flight>, IJourneyPartC<Ai
 				else	{
 					dur = dur + (int) (durMs / 60000);
 				}
-			} catch (ParseException e) {
+			} catch (ParseException exc) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				exc.printStackTrace();
 			}	
-	
 		}
 		return dur;
-	}
+		}
 
 	@Override
 	public int connectingTime() {

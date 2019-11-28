@@ -75,11 +75,12 @@ public class Journey implements IJourneyPartB<Airport, Flight>, IJourneyPartC<Ai
 		List<String[]> timings = new ArrayList<String[]>();
 		List<int[]> intDepTimes = new ArrayList<int[]>();
 		List<int[]> intArrTimes = new ArrayList<int[]>();
+		List<Flight> conns = gp.getEdgeList();
 		String startTime;
 		String endTime;
 		int dur = 0;
 		
-		for(Flight f : fList) {
+		for(Flight f : conns) {
 			startTime = f.getFromGMTime();
 			endTime = f.getToGMTime();
 			String[] e = {startTime, endTime};

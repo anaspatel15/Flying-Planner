@@ -13,7 +13,7 @@ public class FlyingPlannerMainPartBC {
 		fi = new FlyingPlanner();
 		try {
 			System.out.println(fi.populate(new FlightsReader()));
-
+			fi.printTable("NCL", "NTL");
 			// Implement here your user interface using the methods of Part B. You could
 			// optionally expand it to use the methods of Part C.
 

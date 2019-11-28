@@ -93,10 +93,19 @@ public class FlyingPlanner implements IFlyingPlannerPartB<Airport,Flight>, IFlyi
 	
 	
 	public void printTable(String s, String t)	{
-		System.out.println("Journey for " + airsMap.get(s).getName() + "(" + s + ") to " + airsMap.get(t).getName() + "(" + t + ")");
-		String format = "%1$-4s %2$-20s %3$-7s %4$-8s %5$-20s %$-5s";
+		System.out.println("Journey for " + airsMap.get(s).getName() + " (" + s + ") to " + airsMap.get(t).getName() + " (" + t + ")");
+		String format = "%1$-4s %2$-45s %3$-7s %4$-8s %5$-45s %6$-5s \n";
 		System.out.format(format, "Leg", "Leave", "At", "On", "Arrive", "At");
-		//System.out.format(format, args)
+		
+		DijkstraShortestPath<Airport, Flight> p = new DijkstraShortestPath<Airport, Flight>(fg);
+		GraphPath<Airport, Flight> path = p.getPath(airsMap.get(s), airsMap.get(t));
+		List<Flight> connections = path.getEdgeList();
+		Journey j = new Journey(path);
+		for(Flight conn : connections)	{
+			System.out.format(format, "0", conn.getFrom().getName() + " (" + conn.getFrom().getCode() + ")", conn.getFromGMTime(), conn.getFlightCode(), conn.getTo().getName() + " (" + conn.getTo().getCode() + ")", conn.getToGMTime());
+		}
+		System.out.println("Total Journey Cost: " + "£" + (int) path.getWeight());
+		System.out.println("Total Time in the Air: " + j.airTime());
 	}	
 
 	@Override

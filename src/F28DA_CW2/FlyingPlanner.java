@@ -1,41 +1,115 @@
 package F28DA_CW2;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class FlyingPlanner implements IFlyingPlannerPartB<Airport,Flight>, IFlyingPlannerPartC<Airport,Flight> {
+import org.jgrapht.Graph;
+import org.jgrapht.GraphPath;
+import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
+import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
+public class FlyingPlanner implements IFlyingPlannerPartB<Airport,Flight>, IFlyingPlannerPartC<Airport,Flight> {
+    
+	private Graph<Airport, DefaultWeightedEdge> fg = new SimpleDirectedWeightedGraph<>(DefaultWeightedEdge.class); 
+	private HashMap<String, Airport> airsMap;
+	private HashMap<String, Flight> flightsMap;
+	
+	public FlyingPlanner()	{
+		airsMap = new HashMap<String, Airport>();
+		flightsMap = new HashMap<String, Flight>();
+	}
+	
+	
+	/* public Graph<Airport, DefaultWeightedEdge> getGraph()	{
+		return fg;
+	}
+	
+	public Collection<Flight> getFlightMap()	{
+		return flightsMap.values();
+	}	*/
+	
+	
 	@Override
 	public boolean populate(FlightsReader fr) {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			HashSet<String[]> air = fr.getAirports();
+			HashSet<String[]> flights = fr.getFlights();
+			for(String[] a : air) {
+				Airport airport = new Airport(a[0],a[2]);
+				fg.addVertex(airport);
+				airsMap.put(a[0], airport);
+			}
+			
+			for(String[] f : flights)	{
+				Flight fl = new Flight(f[0], airsMap.get(f[1]), f[2], airsMap.get(f[3]), f[4], f[5]);
+				fg.addEdge(fl.getFrom(), fl.getTo());
+				fg.setEdgeWeight(fg.getEdge(fl.getFrom(), fl.getTo()), Integer.parseInt(f[5]));
+				flightsMap.put(f[0], fl);
+			}
+			
+		}
+		catch(Exception e)	{
+			System.out.println(e.getMessage());
+			return false;
+		}
+		return true;
 	}
+	
 
 	@Override
 	public boolean populate(HashSet<String[]> airports, HashSet<String[]> flights) {
-		// TODO Auto-generated method stub
-		return false;
+		try	{
+			for(String[] a : airports) {
+				Airport airport = new Airport(a[0],a[2]);
+				fg.addVertex(airport);
+				airsMap.put(a[0], airport);
+			}
+			
+			for(String[] f : flights)	{
+				Flight fl = new Flight(f[0], airsMap.get(f[1]), f[2], airsMap.get(f[3]), f[4], f[5]);
+				fg.addEdge(fl.getFrom(), fl.getTo());
+				fg.setEdgeWeight(fg.getEdge(fl.getFrom(), fl.getTo()), Integer.parseInt(f[5]));
+				flightsMap.put(f[0], fl);
+			}
+			
+		}
+		catch(Exception e)	{
+			System.out.println(e.getMessage());
+			return false;
+		}
+		return true;
 	}
+	
 
+	
+	
 	@Override
 	public Airport airport(String code) {
-		// TODO Auto-generated method stub
-		return null;
+		return airsMap.get(code);
 	}
 
 	@Override
 	public Flight flight(String code) {
 		// TODO Auto-generated method stub
-		return null;
+		return flightsMap.get(code);
 	}
+	
 
 	@Override
 	public Journey leastCost(String from, String to) throws FlyingPlannerException {
 		// TODO Auto-generated method stub
-		return null;
+		Airport f = airsMap.get(from);
+		Airport t = airsMap.get(to);
+		Journey j = new Journey(f, t);
+		return j;
 	}
 
+	
 	@Override
 	public Journey leastHop(String from, String to) throws FlyingPlannerException {
 		// TODO Auto-generated method stub

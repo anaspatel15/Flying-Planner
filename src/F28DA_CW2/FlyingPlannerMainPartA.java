@@ -1,8 +1,12 @@
 package F28DA_CW2;
 
 import org.jgrapht.Graph;
+import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleGraph;
+import org.jgrapht.graph.SimpleDirectedWeightedGraph;
+import java.util.Scanner;
 
 public class FlyingPlannerMainPartA {
 
@@ -42,6 +46,90 @@ public class FlyingPlannerMainPartA {
         System.out.println();
 		// Code is from HelloJGraphT.java of the org.jgrapth.demo package (start)
         
-	}
+        Graph<String, DefaultWeightedEdge> flights = new SimpleDirectedWeightedGraph<>(DefaultWeightedEdge.class); 
+        Scanner scan = new Scanner(System.in);
+        
+        String edi = "Edinburgh";
+        String lhr = "Heathrow";
+        String dxb = "Dubai";
+        String syd = "Sydney";
+        String kul = "Kuala Lumpur";
+        
+        flights.addVertex(edi);
+        flights.addVertex(lhr);
+        flights.addVertex(dxb);
+        flights.addVertex(syd);
+        flights.addVertex(kul);
+        
+        
+        
+        flights.addEdge(edi, lhr);
+        flights.addEdge(lhr, dxb);
+        flights.addEdge(lhr, syd);
+        flights.addEdge(dxb, kul);
+        flights.addEdge(dxb, edi);
+        flights.addEdge(kul, syd);
+        
+        flights.addEdge(lhr, edi);
+        flights.addEdge(dxb, lhr);
+        flights.addEdge(syd, lhr);
+        flights.addEdge(kul, dxb);
+        flights.addEdge(edi, dxb);
+        flights.addEdge(syd, kul);
+        
+        
+        
+        flights.setEdgeWeight(flights.getEdge(edi, lhr), 80);
+        flights.setEdgeWeight(flights.getEdge(lhr, dxb), 130);
+        flights.setEdgeWeight(flights.getEdge(lhr, syd), 570);
+        flights.setEdgeWeight(flights.getEdge(dxb, kul), 170);
+        flights.setEdgeWeight(flights.getEdge(dxb, edi), 190);
+        flights.setEdgeWeight(flights.getEdge(kul, syd), 150);
 
+        flights.setEdgeWeight(flights.getEdge(lhr, edi), 80);
+        flights.setEdgeWeight(flights.getEdge(dxb, lhr), 130);
+        flights.setEdgeWeight(flights.getEdge(syd, lhr), 570);
+        flights.setEdgeWeight(flights.getEdge(kul, dxb), 170);
+        flights.setEdgeWeight(flights.getEdge(edi, dxb), 190);
+        flights.setEdgeWeight(flights.getEdge(syd, kul), 150);
+        
+        
+        
+        System.out.println(flights);
+        
+        System.out.println("The following airports are used:");
+        
+        for(String a : flights.vertexSet()) {
+        	System.out.println(a);
+        }
+        
+        System.out.println("Please enter the start airport:");
+        String start = scan.nextLine();
+        
+        System.out.println("Please enter the destination airport:");
+        String end = scan.nextLine();
+        
+        System.out.println("Shortest (i.e. cheapest) path:");
+        DijkstraShortestPath<String, DefaultWeightedEdge> sp = new DijkstraShortestPath<String, DefaultWeightedEdge>(flights);        
+        
+        Object path = DijkstraShortestPath.findPathBetween(flights, start, end);
+        
+        String [] route = path.toString().split(",");
+        
+        for(int i = 0; i < route.length ; i++)	{
+        	String edge = route[i].replace(":", "->" ).replace("(", "").replace(")", "").replace("[", "").replace("]", "");
+        	
+        	if(i < 1)	{
+        		System.out.println((i+1) + ". " + edge);
+        	}
+        	else	{
+        		System.out.println((i+1) + "." + edge);
+        	}
+        }
+       
+        System.out.println("Cost of shortest (i.e. cheapest) path = £"+ (int) sp.getPathWeight(start, end));
+		}
+
+	
+	
 }

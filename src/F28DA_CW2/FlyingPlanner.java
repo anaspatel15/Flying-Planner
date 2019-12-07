@@ -11,6 +11,7 @@ import java.util.Set;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
+import org.jgrapht.graph.AsSubgraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.jgrapht.traverse.DepthFirstIterator;
@@ -94,7 +95,7 @@ public class FlyingPlanner implements IFlyingPlannerPartB<Airport,Flight>, IFlyi
 	
 	public void printTable(String s, String t)	{
 		System.out.println("Journey for " + airsMap.get(s).getName() + " (" + s + ") to " + airsMap.get(t).getName() + " (" + t + ")");
-		String format = "%1$-4s %2$-45s %3$-7s %4$-8s %5$-45s %6$-5s \n";
+		String format = "%1$-4s %2$-75s %3$-7s %4$-8s %5$-75s %6$-5s \n";
 		System.out.format(format, "Leg", "Leave", "At", "On", "Arrive", "At");
 		
 		DijkstraShortestPath<Airport, Flight> p = new DijkstraShortestPath<Airport, Flight>(fg);
@@ -102,10 +103,16 @@ public class FlyingPlanner implements IFlyingPlannerPartB<Airport,Flight>, IFlyi
 		List<Flight> connections = path.getEdgeList();
 		Journey j = new Journey(path);
 		
-		
-		for(Flight conn : connections)	{
-			System.out.format(format, "0", conn.getFrom().getName() + " (" + conn.getFrom().getCode() + ")", conn.getFromGMTime(), conn.getFlightCode(), conn.getTo().getName() + " (" + conn.getTo().getCode() + ")", conn.getToGMTime());
+		for(int i = 0; i < connections.size(); i++) {
+			System.out.format(format, i+1, connections.get(i).getFrom().getName() + " (" + connections.get(i).getFrom().getCode() + ")", connections.get(i).getFromGMTime(), connections.get(i).getFlightCode(), connections.get(i).getTo().getName() + " (" + connections.get(i).getTo().getCode() + ")", connections.get(i).getToGMTime());
+
 		}
+		
+		
+		
+		/*for(Flight conn : connections)	{
+			System.out.format(format, "0", conn.getFrom().getName() + " (" + conn.getFrom().getCode() + ")", conn.getFromGMTime(), conn.getFlightCode(), conn.getTo().getName() + " (" + conn.getTo().getCode() + ")", conn.getToGMTime());
+		}*/
 		
 		System.out.println("Total Journey Cost: " + "£" + (int) path.getWeight());
 		System.out.println("Total Time in the Air: " + j.airTime());
@@ -128,7 +135,23 @@ public class FlyingPlanner implements IFlyingPlannerPartB<Airport,Flight>, IFlyi
 	@Override
 	public Journey leastHop(String from, String to) throws FlyingPlannerException {
 		// TODO Auto-generated method stub
-		return null;
+		Airport f = airsMap.get(from);
+		Airport t = airsMap.get(to);
+		DijkstraShortestPath<Airport, Flight> p = new DijkstraShortestPath<Airport, Flight>(fg);
+		GraphPath<Airport, Flight> path = p.getPath(f, t);
+		List<Flight> conns = path.getEdgeList();
+		AsSubgraph<Airport, Flight> ag = new AsSubgraph<Airport, Flight>(fg);
+		
+		
+		for(Flight fl : ag.getAllEdges(f, t)) {
+			ag.setEdgeWeight(fl, 1);
+		}
+		
+		List<Flight> connects = path.getEdgeList();
+		
+		Journey j = new Journey(path);
+		return j;
+		
 	}
 
 	@Override

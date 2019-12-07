@@ -20,8 +20,6 @@ public class Journey implements IJourneyPartB<Airport, Flight>, IJourneyPartC<Ai
 	
 
 	public Journey(GraphPath<Airport, Flight> gp) {
-		this.start = start;
-		this.end = end;
 		this.gp = gp;
 	}
 	
@@ -72,9 +70,6 @@ public class Journey implements IJourneyPartB<Airport, Flight>, IJourneyPartC<Ai
 	public int airTime() {
 		// TODO Auto-generated method stub
 	
-		List<String[]> timings = new ArrayList<String[]>();
-		List<int[]> intDepTimes = new ArrayList<int[]>();
-		List<int[]> intArrTimes = new ArrayList<int[]>();
 		List<Flight> conns = gp.getEdgeList();
 		String startTime;
 		String endTime;

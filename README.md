@@ -1,5 +1,5 @@
 # Flying-Planner
-This is a project I had done in 2nd year, that involves designing a Flying Planner in Java.
+This is a project I had done in 2nd year that involves designing a Flying Planner in Java.
 # How it works
 There are 2 parts to this program:
 
